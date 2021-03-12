@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <title>Star Wars API</title>
+</head>
+<body>
+    <div class="container">
+        <h3>Pessoas Star Wars</h3>
+        <table class="table table-striped" id="table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Altura</th>
+                    <th>Peso</th>
+                    <th>Cor do Cabelo</th>
+                    <th>Cor do Olho</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="6" class="text-center">Carregando...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+
+        function addItem(name, height, mass, hair_color, eye_color) {
+            const table = document.getElementById('table');
+            let template = `
+                <td>${name}</td>
+                <td>${height}</td>
+                <td>${mass}</td>
+                <td>${hair_color}</td>
+                <td>${eye_color}</td>
+                <td>
+                    <button class="btn btn-sm btn-secondary btn-block">Editar</button>
+                    <button class="btn btn-sm btn-danger btn-block">Excluir</button>
+                </td>
+            `;
+            let tr = document.createElement('tr');
+            tr.innerHTML = template;
+            table.children[1].append(tr);
+        }
+
+        (async () => {
+
+            async function getPeople() {
+                const response = await fetch('https://swapi.dev/api/people/?page=1');
+                return await response.json();
+            }
+
+            const people = await getPeople();
+
+            document.getElementById('table').children[1].children[0].remove();
+
+            for(let i = 0; i < people.results.length; i++) {
+                const p = people.results[i];
+                addItem(p.name, p.height, p.mass, p.hair_color, p.eye_color);
+            }
+
+        })();
+
+    </script>
+</body>
+</html>
