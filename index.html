@@ -104,7 +104,6 @@
             tr.children[2].innerHTML = document.getElementById('mass').value;
             tr.children[3].innerHTML = document.getElementById('hair_color').value;
             tr.children[4].innerHTML = document.getElementById('eye_color').value;
-            showTable();
         }
 
         function populateForm(id, name, height, mass, hair_color, eye_color) {
@@ -133,6 +132,7 @@
         document.getElementById('btn-save-item').addEventListener('click', function(e) {
             updateItem(document.getElementById('id').value);
             clearForm();
+            showTable();
         });
 
         document.getElementById('next-page').addEventListener('click', function(e) {
