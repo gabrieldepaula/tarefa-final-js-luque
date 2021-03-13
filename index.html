@@ -27,12 +27,51 @@
                 </tr>
             </tbody>
         </table>
+
+        <form id="form-edit-item" class="d-none">
+            <input type="hidden" name="id" id="id">
+            <div class="mb-3">
+                <label for="name" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="name">
+            </div>
+            <div class="mb-3">
+                <label for="height" class="form-label">Altura</label>
+                <input type="text" class="form-control" id="height">
+            </div>
+            <div class="mb-3">
+                <label for="mass" class="form-label">Peso</label>
+                <input type="text" class="form-control" id="mass">
+            </div>
+            <div class="mb-3">
+                <label for="hair_color" class="form-label">Cor do cabelo</label>
+                <input type="text" class="form-control" id="hair_color">
+            </div>
+            <div class="mb-3">
+                <label for="eye_color" class="form-label">Cor do olho</label>
+                <input type="text" class="form-control" id="eye_color">
+            </div>
+            <button type="button" class="btn btn-danger" id="btn-cancel-edit">Cancelar</button>
+            <button type="button" class="btn btn-success" id="btn-save-item">Salvar</button>
+        </form>
+
     </div>
 
     <script>
 
-        function addItem(name, height, mass, hair_color, eye_color) {
-            const table = document.getElementById('table');
+        const table = document.getElementById('table');
+        const form = document.getElementById('form-edit-item');
+
+        function showForm() {
+            table.classList.add('d-none');
+            form.classList.remove('d-none');
+        }
+
+        function showTable() {
+            table.classList.remove('d-none');
+            form.classList.add('d-none');
+        }
+
+        function addItem(id, name, height, mass, hair_color, eye_color) {
             let template = `
                 <td>${name}</td>
                 <td>${height}</td>
@@ -40,14 +79,53 @@
                 <td>${hair_color}</td>
                 <td>${eye_color}</td>
                 <td>
-                    <button class="btn btn-sm btn-secondary btn-block">Editar</button>
-                    <button class="btn btn-sm btn-danger btn-block">Excluir</button>
+                    <button type="button" class="btn btn-sm btn-secondary btn-block btn-edit-item">Editar</button>
+                    <button type="button" class="btn btn-sm btn-danger btn-block btn-delete-item">Excluir</button>
                 </td>
             `;
             let tr = document.createElement('tr');
+            tr.id = id;
             tr.innerHTML = template;
             table.children[1].append(tr);
         }
+
+        function updateItem(id) {
+            let tr = document.getElementById(id);
+            tr.children[0].innerHTML = document.getElementById('name').value;
+            tr.children[1].innerHTML = document.getElementById('height').value;
+            tr.children[2].innerHTML = document.getElementById('mass').value;
+            tr.children[3].innerHTML = document.getElementById('hair_color').value;
+            tr.children[4].innerHTML = document.getElementById('eye_color').value;
+            showTable();
+        }
+
+        function populateForm(id, name, height, mass, hair_color, eye_color) {
+            document.getElementById('id').value = id;
+            document.getElementById('name').value = name;
+            document.getElementById('height').value = height;
+            document.getElementById('mass').value = mass;
+            document.getElementById('hair_color').value = hair_color;
+            document.getElementById('eye_color').value = eye_color;
+        }
+
+        function clearForm() {
+            document.getElementById('id').value = '';
+            document.getElementById('name').value = '';
+            document.getElementById('height').value = '';
+            document.getElementById('mass').value = '';
+            document.getElementById('hair_color').value = '';
+            document.getElementById('eye_color').value = '';
+        }
+
+        document.getElementById('btn-cancel-edit').addEventListener('click', function(e) {
+            clearForm();
+            showTable();
+        });
+
+        document.getElementById('btn-save-item').addEventListener('click', function(e) {
+            updateItem(document.getElementById('id').value);
+            clearForm();
+        });
 
         (async () => {
 
@@ -58,13 +136,40 @@
 
             const people = await getPeople();
 
-            document.getElementById('table').children[1].children[0].remove();
+            table.children[1].children[0].remove(); // remove tr "carregando..."
 
             for(let i = 0; i < people.results.length; i++) {
                 const p = people.results[i];
-                addItem(p.name, p.height, p.mass, p.hair_color, p.eye_color);
+                addItem(i + 1, p.name, p.height, p.mass, p.hair_color, p.eye_color);
             }
 
+        })();
+
+        (function cliqueLista() {
+            table.addEventListener('click', function(e) {
+
+                // Botao remover
+                if(e.target.classList.contains('btn-delete-item')) {
+                    const confirm = window.confirm('Tem certeza que deseja remover este item?');
+                    if(confirm) {
+                        e.target.parentNode.parentNode.remove();
+                    }
+                }
+
+                // Botao editar
+                if(e.target.classList.contains('btn-edit-item')) {
+
+                    let id = e.target.parentNode.parentNode.id;
+                    let nameValue = e.target.parentNode.parentNode.children[0].innerHTML;
+                    let heightValue = e.target.parentNode.parentNode.children[1].innerHTML;
+                    let massValue = e.target.parentNode.parentNode.children[2].innerHTML;
+                    let hairColorValue = e.target.parentNode.parentNode.children[3].innerHTML;
+                    let eyeColorValue = e.target.parentNode.parentNode.children[4].innerHTML;
+
+                    populateForm(id, nameValue, heightValue, massValue, hairColorValue, eyeColorValue);
+                    showForm();
+                }
+            });
         })();
 
     </script>
