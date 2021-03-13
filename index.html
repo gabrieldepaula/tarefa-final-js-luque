@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container">
-        <h3>Pessoas Star Wars</h3>
+        <h3 class="mb-3 mt-3">Pessoas Star Wars</h3>
         <table class="table table-striped" id="table">
             <thead>
                 <tr>
@@ -27,6 +27,11 @@
                 </tr>
             </tbody>
         </table>
+
+        <div id="pagination" class="mb-5">
+            <button type="button" id="previous-page" class="btn btn-outline-secondary btn-sm">Página Anterior</button>
+            <button type="button" id="next-page" class="btn btn-outline-secondary btn-sm">Próxima Página</button>
+        </div>
 
         <form id="form-edit-item" class="d-none">
             <input type="hidden" name="id" id="id">
@@ -50,8 +55,8 @@
                 <label for="eye_color" class="form-label">Cor do olho</label>
                 <input type="text" class="form-control" id="eye_color">
             </div>
-            <button type="button" class="btn btn-danger" id="btn-cancel-edit">Cancelar</button>
-            <button type="button" class="btn btn-success" id="btn-save-item">Salvar</button>
+            <button type="button" class="btn btn-danger btn-sm" id="btn-cancel-edit">Cancelar</button>
+            <button type="button" class="btn btn-success btn-sm" id="btn-save-item">Salvar</button>
         </form>
 
     </div>
@@ -59,15 +64,18 @@
     <script>
 
         const table = document.getElementById('table');
+        const pagination = document.getElementById('pagination');
         const form = document.getElementById('form-edit-item');
 
         function showForm() {
             table.classList.add('d-none');
+            pagination.classList.add('d-none');
             form.classList.remove('d-none');
         }
 
         function showTable() {
             table.classList.remove('d-none');
+            pagination.classList.remove('d-none');
             form.classList.add('d-none');
         }
 
@@ -127,15 +135,23 @@
             clearForm();
         });
 
+        document.getElementById('next-page').addEventListener('click', function(e) {
+            alert('proxima pagina');
+        });
+
+        document.getElementById('previous-page').addEventListener('click', function(e) {
+            alert('pagina anterior');
+        });
+
         (async () => {
+            let page = 1;
 
             async function getPeople() {
-                const response = await fetch('https://swapi.dev/api/people/?page=1');
+                const response = await fetch('https://swapi.dev/api/people/?page='+page);
                 return await response.json();
             }
 
             const people = await getPeople();
-
             table.children[1].children[0].remove(); // remove tr "carregando..."
 
             for(let i = 0; i < people.results.length; i++) {
