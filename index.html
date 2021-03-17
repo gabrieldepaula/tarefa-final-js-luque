@@ -66,9 +66,7 @@
         const table = document.getElementById('table');
         const pagination = document.getElementById('pagination');
         const form = document.getElementById('form-edit-item');
-        const api = 'https://swapi.dev/api/people/?page=';
         let peoples;
-        let page = 1;
 
         function showForm() {
             table.classList.add('d-none');
@@ -171,7 +169,7 @@
             }
         }
 
-        mountTable(api+page);
+        mountTable('https://swapi.dev/api/people/?page=1');
 
         (function cliqueLista() {
             table.addEventListener('click', function(e) {
